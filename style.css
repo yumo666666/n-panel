@@ -1,0 +1,911 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+    color: #ffffff;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.time-display {
+    font-size: 2rem;
+    font-weight: 300;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#current-time {
+    font-size: 3.5rem;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+#current-date {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    line-height: 1;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3rem;
+}
+
+.search-box {
+    display: flex;
+    width: 100%;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    padding: 0.5rem;
+    backdrop-filter: blur(10px);
+}
+
+#search-input {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    color: #ffffff;
+    font-size: 1rem;
+    outline: none;
+}
+
+#search-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+#search-button {
+    background: none;
+    border: none;
+    color: #ffffff;
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+#search-button:hover {
+    opacity: 0.8;
+}
+
+.sites-container {
+    display: grid;
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+/* 默认卡片样式 - 自适应大小 */
+.sites-container.adaptive {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+/* 固定大小卡片样式 */
+.sites-container.fixed {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 180px));
+    justify-content: center;
+}
+
+/* 默认卡片样式 */
+.site-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transform-origin: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.site-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.site-card i {
+    font-size: 2rem;
+    margin-bottom: 0.8rem;
+    display: block;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.site-card:hover i {
+    transform: scale(1.1);
+}
+
+.site-card span {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
+
+.site-card:hover span {
+    opacity: 1;
+}
+
+/* 小卡片样式 */
+.site-card.small {
+    width: 120px;
+    height: 120px;
+    padding: 1rem;
+}
+
+.site-card.small i {
+    font-size: 2rem;
+    margin-bottom: 0.8rem;
+}
+
+.site-card.small span {
+    font-size: 0.9rem;
+}
+
+/* 大卡片样式 */
+.site-card.large {
+    width: 160px;
+    height: 160px;
+    padding: 1.5rem;
+}
+
+.site-card.large i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.site-card.large span {
+    font-size: 1.1rem;
+}
+
+/* 添加卡片样式 */
+.site-card.add-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    box-shadow: none;
+}
+
+.site-card.add-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.site-card.add-card i {
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.site-card.add-card:hover i {
+    transform: scale(1.1) rotate(90deg);
+    color: rgba(255, 255, 255, 1);
+}
+
+.site-card.add-card span {
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.site-card.add-card:hover span {
+    opacity: 1;
+}
+
+/* 小卡片添加按钮样式 */
+.site-card.add-card.small {
+    width: 120px;
+    height: 120px;
+    padding: 1rem;
+}
+
+.site-card.add-card.small i {
+    font-size: 2rem;
+    margin-bottom: 0.8rem;
+}
+
+.site-card.add-card.small span {
+    font-size: 0.9rem;
+}
+
+/* 大卡片添加按钮样式 */
+.site-card.add-card.large {
+    width: 160px;
+    height: 160px;
+    padding: 1.5rem;
+}
+
+.site-card.add-card.large i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.site-card.add-card.large span {
+    font-size: 1.1rem;
+}
+
+/* 删除按钮动画 */
+.delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255, 0, 0, 0.3);
+    border: none;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.site-card:hover .delete-btn {
+    display: flex;
+    opacity: 1;
+    transform: scale(1);
+}
+
+.delete-btn:hover {
+    background: rgba(255, 0, 0, 0.5);
+    transform: scale(1.1);
+}
+
+/* 删除旧的添加按钮样式 */
+.add-site-btn {
+    display: none;
+}
+
+/* 模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #2a2a2a;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    padding: 2rem;
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+}
+
+.form-group input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.form-group small {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    opacity: 0.6;
+}
+
+.form-group small a {
+    color: #4a9eff;
+    text-decoration: none;
+}
+
+.modal-footer {
+    text-align: right;
+    margin-top: 2rem;
+}
+
+.save-btn {
+    background: #4a9eff;
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.save-btn:hover {
+    background: #357abd;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .time-display {
+        font-size: 1.5rem;
+    }
+    
+    #current-time {
+        font-size: 2.5rem;
+    }
+    
+    .sites-container.adaptive {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+    
+    .sites-container.fixed {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 150px));
+    }
+    
+    .site-card.fixed {
+        width: 150px;
+        height: 150px;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 1.5rem;
+    }
+}
+
+.settings-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    padding: 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+}
+
+.settings-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.settings-btn i {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.settings-btn:hover i {
+    transform: rotate(90deg);
+}
+
+/* 隐藏滚动条但保持可滚动 */
+.settings-modal-content {
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+.settings-modal-content::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+.settings-section {
+    margin-bottom: 2rem;
+}
+
+.settings-section h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #ffffff;
+}
+
+.settings-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.setting-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: transform 0.3s, background-color 0.3s;
+    text-align: center;
+}
+
+.setting-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.setting-card.active {
+    background: rgba(74, 158, 255, 0.2);
+    border: 2px solid #4a9eff;
+}
+
+.setting-preview {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 120px;
+}
+
+.preview-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.preview-card.small {
+    width: 120px;
+    height: 120px;
+}
+
+.preview-card.large {
+    width: 160px;
+    height: 160px;
+}
+
+.preview-card i {
+    font-size: 2rem;
+}
+
+.preview-card.large i {
+    font-size: 2.5rem;
+}
+
+.preview-clock {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.preview-clock .preview-time {
+    font-size: 3.5rem;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.preview-clock .preview-date {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    line-height: 1;
+}
+
+/* 简洁时间样式 */
+.time-display.simple #current-time {
+    font-size: 3.5rem;
+}
+
+/* 仅时间样式 */
+.time-display.time-only {
+    min-height: 120px;
+}
+
+.time-display.time-only #current-time {
+    font-size: 3.5rem;
+    margin-bottom: 0;
+}
+
+.time-display.time-only #current-date {
+    display: none;
+}
+
+/* 预览时钟样式 */
+.preview-clock {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.preview-clock .preview-time {
+    font-size: 3.5rem;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.preview-clock .preview-date {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    line-height: 1;
+}
+
+/* 简洁时间预览 */
+.preview-clock.simple .preview-time {
+    font-size: 3.5rem;
+}
+
+/* 仅时间预览 */
+.preview-clock.time-only {
+    min-height: 120px;
+}
+
+.preview-clock.time-only .preview-time {
+    font-size: 3.5rem;
+    margin-bottom: 0;
+}
+
+.preview-clock.time-only .preview-date {
+    display: none;
+}
+
+.setting-label {
+    font-size: 0.9rem;
+    color: #ffffff;
+    opacity: 0.9;
+}
+
+/* 背景设置样式 */
+#background-upload {
+    width: 100%;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 8px;
+    color: white;
+}
+
+#background-color {
+    width: 100%;
+    height: 40px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* 卡片大小样式 */
+.sites-container.small {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 120px));
+    justify-content: center;
+}
+
+.sites-container.large {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 160px));
+    justify-content: center;
+}
+
+.site-card.small {
+    width: 120px;
+    height: 120px;
+}
+
+.site-card.large {
+    width: 160px;
+    height: 160px;
+}
+
+/* 时钟样式 */
+.time-display {
+    font-size: 2rem;
+    font-weight: 300;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#current-time {
+    font-size: 3.5rem;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+#current-date {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    line-height: 1;
+}
+
+/* 简洁时间样式 */
+.time-display.simple #current-time {
+    font-size: 3.5rem;
+}
+
+/* 仅时间样式 */
+.time-display.time-only {
+    min-height: 120px;
+}
+
+.time-display.time-only #current-time {
+    font-size: 3.5rem;
+    margin-bottom: 0;
+}
+
+.time-display.time-only #current-date {
+    display: none;
+}
+
+/* 预览时钟样式 */
+.preview-clock {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.preview-clock .preview-time {
+    font-size: 3.5rem;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.preview-clock .preview-date {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    line-height: 1;
+}
+
+/* 简洁时间预览 */
+.preview-clock.simple .preview-time {
+    font-size: 3.5rem;
+}
+
+/* 仅时间预览 */
+.preview-clock.time-only {
+    min-height: 120px;
+}
+
+.preview-clock.time-only .preview-time {
+    font-size: 3.5rem;
+    margin-bottom: 0;
+}
+
+.preview-clock.time-only .preview-date {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .settings-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .preview-card.small {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .preview-card.large {
+        width: 140px;
+        height: 140px;
+    }
+    
+    .sites-container.small {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 100px));
+    }
+    
+    .sites-container.large {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 140px));
+    }
+    
+    .site-card.small {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .site-card.large {
+        width: 140px;
+        height: 140px;
+    }
+}
+
+/* 排版模式样式 */
+.sites-container.reordering {
+    cursor: move;
+}
+
+.sites-container.reordering .site-card {
+    cursor: move;
+    animation: shake 0.5s ease-in-out;
+    animation-iteration-count: infinite;
+}
+
+.sites-container.reordering .site-card.dragging {
+    animation: none;
+    opacity: 0.8;
+    transform: scale(1.05);
+    z-index: 1000;
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+}
+
+.sites-container.reordering .site-card.add-card {
+    display: none;
+}
+
+.sites-container.reordering .delete-btn {
+    display: none;
+}
+
+@keyframes shake {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(-1px, -1px) rotate(-0.5deg); }
+    50% { transform: translate(1px, 1px) rotate(0.5deg); }
+    75% { transform: translate(-1px, 1px) rotate(-0.5deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+/* 完成按钮样式 */
+.reorder-complete {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: #4a9eff;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.reorder-complete.show {
+    display: flex;
+}
+
+.reorder-complete:hover {
+    background: #357abd;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.reorder-complete i {
+    font-size: 1.2rem;
+}
+
+/* 右键菜单样式 */
+.context-menu {
+    position: fixed;
+    background: rgba(42, 42, 42, 0.95);
+    border-radius: 8px;
+    padding: 0.5rem 0;
+    min-width: 150px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: none;
+}
+
+.context-menu.show {
+    display: block;
+}
+
+.context-menu-item {
+    padding: 0.8rem 1.2rem;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.context-menu-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.context-menu-item i {
+    font-size: 1.1rem;
+}
+
+.context-menu-item.delete {
+    color: #ff4d4d;
+}
+
+.context-menu-item.delete:hover {
+    background: rgba(255, 77, 77, 0.1);
+}
+
+/* 移除旧的删除按钮样式 */
+.delete-btn {
+    display: none !important;
+} 

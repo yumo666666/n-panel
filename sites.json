@@ -1,0 +1,32 @@
+[
+  {
+    "icon": "ri-zhihu-fill",
+    "name": "知乎",
+    "url": "https://www.zhihu.com"
+  },
+  {
+    "icon": "ri-youtube-fill",
+    "name": "YouTube",
+    "url": "https://www.youtube.com"
+  },
+  {
+    "icon": "ri-weibo-fill",
+    "name": "微博",
+    "url": "https://www.weibo.com"
+  },
+  {
+    "icon": "ri-bilibili-fill",
+    "name": "哔哩哔哩",
+    "url": "https://www.bilibili.com"
+  },
+  {
+    "icon": "ri-github-fill",
+    "name": "GitHub",
+    "url": "https://www.github.com"
+  },
+  {
+    "icon": "ri-google-fill",
+    "name": "Google",
+    "url": "https://www.google.com"
+  }
+]
