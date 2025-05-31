@@ -104,4 +104,42 @@ python server.py
 - 网站地址需要包含 `http://` 或 `https://`
 
 ## 许可证
-MIT License 
+MIT License
+
+## 设置项统一管理规则
+
+本项目所有用户设置（包括卡片大小、时钟样式、背景类型、背景颜色、背景图片、是否随机背景等）均通过后端的 `settings.json` 文件统一存储和管理。具体规则如下：
+
+- 所有设置项的变更，前端会通过 `/api/settings` 接口（GET/POST）与后端同步，后端会实时更新 `settings.json` 文件。
+- 前端页面初始化和每次打开设置面板时，都会从服务器拉取最新的设置并自动高亮当前选项。
+- 设置项包括但不限于：
+  - `cardSize`：卡片大小（small/large）
+  - `clockStyle`：时钟样式（simple/time-only）
+  - `backgroundType`：背景类型（color/image）
+  - `backgroundColor`：背景颜色
+  - `backgroundImage`：当前选中的背景图片
+  - `randomBackground`：是否启用随机背景图片
+- 所有设置项的更改都会立即保存到服务器，刷新页面后自动恢复。
+- 未来如需扩展更多设置项，建议直接在 `settings.json` 增加字段，并在前端通过 `/api/settings` 读写。
+
+这样可以保证所有用户个性化设置都能持久化、同步且易于维护。
+
+## 新增功能（2024年6月）
+- 支持背景图片上传、删除（右键菜单）
+- 背景图片区域支持滚动，最多显示3行，滚动条自动隐藏
+- 选中背景图片高亮显示，主题色自动适配
+- 背景图片右键菜单支持删除，删除后自动切换默认背景
+- 支持Docker一键部署
+
+## Docker 部署
+
+1. 构建镜像
+```bash
+docker-compose build
+```
+2. 启动服务
+```bash
+docker-compose up -d
+```
+3. 访问页面
+浏览器访问 http://localhost:5000 

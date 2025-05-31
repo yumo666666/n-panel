@@ -28,5 +28,10 @@
     "icon": "ri-google-fill",
     "name": "Google",
     "url": "https://www.google.com"
+  },
+  {
+    "name": "cs",
+    "url": "http://192.168.101.1:8002/admin/",
+    "icon": "ri-global-line"
   }
 ]

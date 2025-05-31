@@ -9,6 +9,145 @@ body {
     background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
     color: #ffffff;
     min-height: 100vh;
+    transition: background 0.3s;
+}
+
+body.theme-light {
+    color: #222;
+}
+body.theme-dark {
+    color: #fff;
+}
+
+body.theme-light .modal-content,
+body.theme-light .settings-modal-content,
+body.theme-light .site-card,
+body.theme-light .site-card.add-card,
+body.theme-light .search-box,
+body.theme-light .setting-card,
+body.theme-light .preview-card,
+body.theme-light .preview-clock,
+body.theme-light .preview-background,
+body.theme-light .background-settings {
+    background: rgba(255,255,255,0.85) !important;
+    color: #222 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+body.theme-light .search-box {
+    background: rgba(255,255,255,0.7) !important;
+    color: #222 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid #e0e0e0;
+}
+body.theme-light .search-box input {
+    background: transparent !important;
+    color: #222 !important;
+    border: none;
+}
+body.theme-light .search-box button {
+    background: transparent !important;
+    color: #222 !important;
+    border: none;
+}
+body.theme-light .setting-card.active {
+    background: rgba(74, 158, 255, 0.12) !important;
+    border: 2px solid #4a9eff;
+}
+body.theme-light .background-image-item.selected {
+    box-shadow: 0 0 0 3px #4a9eff;
+    z-index: 2;
+}
+body.theme-light .switch-label {
+    color: #222;
+}
+body.theme-light .form-group label,
+body.theme-light .form-group small,
+body.theme-light .setting-label,
+body.theme-light .preview-time,
+body.theme-light .preview-date,
+body.theme-light .context-menu,
+body.theme-light .context-menu-item {
+    color: #222 !important;
+}
+body.theme-light .site-card.add-card i {
+    color: #222 !important;
+}
+body.theme-light .settings-btn i {
+    color: #222 !important;
+}
+body.theme-light #search-input::placeholder {
+    color: #888 !important;
+}
+body.theme-light .settings-btn {
+    background: rgba(255,255,255,0.7) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid #e0e0e0;
+}
+body.theme-light .settings-section h3 {
+    color: #222 !important;
+}
+body.theme-light .preview-background.color,
+body.theme-light .preview-background.image {
+    background: rgba(0,0,0,0.06) !important;
+}
+body.theme-light .preview-background i {
+    color: #222 !important;
+}
+body.theme-light .close-btn {
+    color: #222 !important;
+}
+body.theme-light .close-btn:hover {
+    background: rgba(0,0,0,0.06) !important;
+}
+body.theme-light .context-menu {
+    background: rgba(255,255,255,0.97) !important;
+    color: #222 !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    border: 1px solid #e0e0e0;
+}
+body.theme-light .context-menu-item {
+    color: #222 !important;
+}
+body.theme-light .context-menu-item.delete {
+    color: #e53935 !important;
+}
+body.theme-light .context-menu-item:hover {
+    background: rgba(0,0,0,0.06) !important;
+}
+
+body.theme-dark .modal-content,
+body.theme-dark .settings-modal-content,
+body.theme-dark .site-card,
+body.theme-dark .site-card.add-card,
+body.theme-dark .search-box,
+body.theme-dark .setting-card,
+body.theme-dark .preview-card,
+body.theme-dark .preview-clock,
+body.theme-dark .preview-background,
+body.theme-dark .background-settings {
+    background: rgba(42,42,42,0.95) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.22);
+}
+body.theme-dark .search-box {
+    background: rgba(255,255,255,0.08) !important;
+}
+body.theme-dark .setting-card.active {
+    background: rgba(74, 158, 255, 0.2) !important;
+    border: 2px solid #4a9eff;
+}
+body.theme-dark .background-image-item.selected {
+    box-shadow: 0 0 0 3px #4a9eff;
+    z-index: 2;
+}
+body.theme-dark .switch-label {
+    color: #fff;
+}
+body.theme-dark .context-menu {
+    background: rgba(42,42,42,0.95) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.22);
+    border: none;
 }
 
 .container {
@@ -44,7 +183,7 @@ header {
 }
 
 #current-date {
-    font-size: 1.2rem;
+    font-size: 3.2rem;
     opacity: 0.8;
     line-height: 1;
 }
@@ -251,41 +390,49 @@ header {
     font-size: 1.1rem;
 }
 
-/* 删除按钮动画 */
-.delete-btn {
+/* 删除按钮样式 */
+.site-card .delete-btn {
     position: absolute;
-    top: 5px;
-    right: 5px;
-    background: rgba(255, 0, 0, 0.3);
+    top: 8px;
+    right: 8px;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 77, 77, 0.9);
     border: none;
-    color: white;
-    width: 24px;
-    height: 24px;
     border-radius: 50%;
-    cursor: pointer;
+    color: white;
+    font-size: 14px;
     display: none;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0;
-    transform: scale(0.8);
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
 }
 
-.site-card:hover .delete-btn {
-    display: flex;
-    opacity: 1;
-    transform: scale(1);
-}
-
-.delete-btn:hover {
-    background: rgba(255, 0, 0, 0.5);
+.site-card .delete-btn:hover {
+    background: rgb(255, 77, 77);
     transform: scale(1.1);
 }
 
-/* 删除旧的添加按钮样式 */
-.add-site-btn {
-    display: none;
+/* 长按模式下显示删除按钮 */
+.sites-container.reordering .site-card .delete-btn {
+    display: flex !important;
+}
+
+/* 拖拽时隐藏删除按钮 */
+.sites-container.reordering .site-card.dragging .delete-btn {
+    display: none !important;
+}
+
+/* 添加卡片不显示删除按钮 */
+.sites-container.reordering .site-card.add-card .delete-btn {
+    display: none !important;
+}
+
+/* 移除旧的删除按钮样式 */
+.delete-btn {
+    display: none !important;
 }
 
 /* 模态框样式 */
@@ -308,12 +455,13 @@ header {
 }
 
 .modal-content {
-    background: #2a2a2a;
+    background: rgba(255,255,255,0.95) !important;
     border-radius: 15px;
     width: 90%;
     max-width: 500px;
     padding: 2rem;
     position: relative;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
 }
 
 .modal-header {
@@ -351,16 +499,18 @@ header {
 .form-group input {
     width: 100%;
     padding: 0.8rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
+    background: rgba(255,255,255,0.85) !important;
+    color: #222 !important;
+    border: 1px solid #e0e0e0 !important;
+    box-shadow: none !important;
     border-radius: 8px;
-    color: white;
     font-size: 1rem;
 }
 
 .form-group input:focus {
     outline: none;
-    background: rgba(255, 255, 255, 0.15);
+    border: 1.5px solid #4a9eff !important;
+    background: #fff !important;
 }
 
 .form-group small {
@@ -381,18 +531,19 @@ header {
 }
 
 .save-btn {
-    background: #4a9eff;
-    color: white;
+    background: #357abd !important;
+    color: #fff !important;
     border: none;
     padding: 0.8rem 2rem;
     border-radius: 8px;
     cursor: pointer;
     font-size: 1rem;
     transition: background-color 0.3s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .save-btn:hover {
-    background: #357abd;
+    background: #225a9e !important;
 }
 
 @media (max-width: 768px) {
@@ -698,7 +849,7 @@ header {
 
 /* 简洁时间样式 */
 .time-display.simple #current-time {
-    font-size: 3.5rem;
+    font-size: 4.5rem;
 }
 
 /* 仅时间样式 */
@@ -707,11 +858,12 @@ header {
 }
 
 .time-display.time-only #current-time {
-    font-size: 3.5rem;
+    font-size: 6.5rem;
     margin-bottom: 0;
 }
 
 .time-display.time-only #current-date {
+    font-size: 6.5rem;
     display: none;
 }
 
@@ -905,7 +1057,242 @@ header {
     background: rgba(255, 77, 77, 0.1);
 }
 
-/* 移除旧的删除按钮样式 */
-.delete-btn {
-    display: none !important;
+/* 背景设置样式 */
+.preview-background {
+    width: 100%;
+    height: 120px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.preview-background i {
+    font-size: 2.5rem;
+    color: #ffffff;
+}
+
+.preview-background.color {
+    background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+}
+
+.preview-background.image {
+    background: linear-gradient(135deg, #4a9eff, #2a5caa);
+}
+
+.background-settings {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.background-settings .form-group {
+    margin-bottom: 1rem;
+}
+
+.background-settings label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+}
+
+.background-settings small {
+    display: block;
+    margin-top: 0.25rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+}
+
+.checkbox-label {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.background-list {
+    margin-top: 1.5rem;
+}
+
+.background-list h4 {
+    margin-bottom: 1rem;
+    color: #ffffff;
+    font-size: 1rem;
+}
+
+.background-images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+    margin-top: 0;
+    align-items: stretch;
+    padding: 12px;
+    max-height: calc(3 * (120px * 9 / 16 + 1rem) + 24px);
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+.background-images-grid::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+.background-image-item,
+.background-upload-item {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.background-image-item {
+    position: relative;
+    aspect-ratio: 16/9;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.background-image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.background-image-item:hover img {
+    transform: scale(1.05);
+}
+
+.background-image-item .delete-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.background-image-item:hover .delete-btn {
+    opacity: 1;
+}
+
+.background-image-item .delete-btn:hover {
+    background: rgba(255, 0, 0, 0.5);
+}
+
+.background-upload-row {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+.upload-btn-group button {
+    background: #4a9eff;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.3s;
+}
+.upload-btn-group button:hover {
+    background: #357abd;
+}
+
+.background-image-item.selected {
+    box-shadow: 0 0 0 3px #4a9eff;
+    z-index: 2;
+}
+
+.background-upload-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(74, 158, 255, 0.08);
+    border: 2px dashed #4a9eff;
+    transition: border-color 0.2s, background 0.2s;
+}
+.background-upload-item:hover {
+    border-color: #357abd;
+    background: rgba(74, 158, 255, 0.15);
+}
+.background-upload-item .upload-icon-wrapper i {
+    font-size: 3rem;
+    color: #4a9eff;
+}
+
+.background-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 0.5rem;
+    min-height: 2.2em;
+}
+.background-wall-title {
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #fff;
+    font-family: inherit;
+    margin-bottom: 1.2rem;
+    pointer-events: none;
+}
+body.theme-light .background-wall-title {
+    color: #222;
+}
+.background-toggle-btn {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.2em;
+    padding: 0.3em 0.8em;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+    color: var(--toggle-btn-color, #fff);
+}
+body.theme-light .background-toggle-btn {
+    color: var(--toggle-btn-color-light, #357abd);
+}
+body.theme-dark .background-toggle-btn {
+    color: var(--toggle-btn-color-dark, #4a9eff);
+}
+.background-toggle-btn:hover {
+    background: rgba(74, 158, 255, 0.08);
+}
+body.theme-light .background-toggle-btn:hover {
+    background: rgba(53, 122, 189, 0.08);
+}
+
+.required {
+    color: #ff4d4f;
+    margin-left: 4px;
 } 

@@ -79,6 +79,9 @@ const settingsModal = document.getElementById('settings-modal');
 const closeBtns = document.querySelectorAll('.close-btn');
 const saveSiteBtn = document.getElementById('save-site-btn');
 
+// 添加一个变量来跟踪正在编辑的卡片索引
+let editingCardIndex = null;
+
 // 从服务器获取网站数据
 async function fetchSitesFromServer() {
     try {
@@ -259,10 +262,11 @@ function updateCardPositions() {
 
 // 长按开始计时
 function startLongPress(card) {
-    if (longPressTimer) return;
+    if (longPressTimer || isReordering) return;
     
     longPressTimer = setTimeout(() => {
         enterReorderMode();
+        longPressTimer = null;
     }, 500); // 500ms 长按触发
 }
 
@@ -345,10 +349,27 @@ async function renderSites() {
         card.className = `site-card ${loadCardSize()}`;
         card.dataset.index = index;
         card.draggable = true;
-        card.innerHTML = `
+        
+        // 添加删除按钮
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.innerHTML = '×';
+        deleteBtn.addEventListener('click', async (e) => {
+            e.stopPropagation(); // 阻止事件冒泡，防止触发卡片点击
+            if (confirm(`确定要删除 ${site.name} 吗？`)) {
+                sites.splice(index, 1);
+                await saveSites(sites);
+                await renderSites();
+            }
+        });
+        
+        const content = `
             <i class="${site.icon}"></i>
             <span>${site.name}</span>
         `;
+        
+        card.innerHTML = content;
+        card.appendChild(deleteBtn);
         
         // 右键菜单事件
         card.addEventListener('contextmenu', (e) => {
@@ -444,30 +465,18 @@ document.addEventListener('click', (e) => {
 
 // 显示添加网站模态框
 addSiteBtn.addEventListener('click', () => {
+    document.getElementById('modal-title').textContent = '添加网站';
+    document.getElementById('save-site-btn').textContent = '添加';
+    editingCardIndex = null; // 重置编辑索引
     addSiteModal.classList.add('show');
     document.getElementById('site-name').focus();
 });
 
 // 显示设置模态框
-settingsBtn.addEventListener('click', () => {
+settingsBtn.addEventListener('click', async () => {
     settingsModal.classList.add('show');
-    // 设置当前选中的选项
-    const currentCardSize = loadCardSize();
-    const currentClockStyle = loadClockStyle();
-    const currentBackground = loadBackground();
-    
-    document.querySelectorAll('.setting-card').forEach(card => {
-        const setting = card.dataset.setting;
-        const value = card.dataset.value;
-        if ((setting === 'card-size' && value === currentCardSize) ||
-            (setting === 'clock-style' && value === currentClockStyle)) {
-            card.classList.add('active');
-        } else {
-            card.classList.remove('active');
-        }
-    });
-    
-    document.getElementById('background-color').value = currentBackground.type === 'color' ? currentBackground.value : '#1a1a1a';
+    const settings = await loadBackgroundSettings();
+    await updateSettingsUI(settings);
 });
 
 // 关闭模态框
@@ -487,54 +496,66 @@ closeBtns.forEach(btn => {
     });
 });
 
-// 右键菜单事件处理
+// 保存网站按钮点击事件
+saveSiteBtn.addEventListener('click', async () => {
+    const name = document.getElementById('site-name').value.trim();
+    const url = document.getElementById('site-url').value.trim();
+    const icon = document.getElementById('site-icon').value.trim() || 'ri-global-line';  // 默认图标
+    
+    // 验证必填字段
+    if (!name) {
+        alert('请输入网站名称！');
+        return;
+    }
+    if (!url) {
+        alert('请输入网站地址！');
+        return;
+    }
+    
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        alert('请输入有效的网址！');
+        return;
+    }
+
+    const sites = await loadSites();
+    const isEditing = document.getElementById('modal-title').textContent === '编辑网站';
+    
+    if (isEditing && editingCardIndex !== null) {
+        // 编辑模式：更新现有卡片
+        sites[editingCardIndex] = { name, url, icon };
+    } else if (!isEditing) {
+        // 只有在非编辑模式下才添加新卡片
+        sites.push({ name, url, icon });
+    }
+    
+    await saveSites(sites);
+    await renderSites();
+    
+    // 清空表单并关闭模态框
+    document.getElementById('site-name').value = '';
+    document.getElementById('site-url').value = '';
+    document.getElementById('site-icon').value = '';
+    editingCardIndex = null; // 重置编辑索引
+    addSiteModal.classList.remove('show');
+});
+
+// 右键菜单编辑事件
 document.querySelector('.context-menu-item.edit').addEventListener('click', async () => {
     if (!currentCard) return;
     const index = parseInt(currentCard.dataset.index);
+    editingCardIndex = index; // 保存正在编辑的卡片索引
     const sites = await loadSites();
     const site = sites[index];
     
     // 填充编辑表单
+    document.getElementById('modal-title').textContent = '编辑网站';
     document.getElementById('site-name').value = site.name;
     document.getElementById('site-url').value = site.url;
     document.getElementById('site-icon').value = site.icon;
+    document.getElementById('save-site-btn').textContent = '保存';
     
     // 显示编辑模态框
     addSiteModal.classList.add('show');
-    
-    // 修改保存按钮行为
-    const saveBtn = document.getElementById('save-site-btn');
-    const originalClickHandler = saveBtn.onclick;
-    
-    saveBtn.onclick = async () => {
-        const name = document.getElementById('site-name').value.trim();
-        const url = document.getElementById('site-url').value.trim();
-        const icon = document.getElementById('site-icon').value.trim();
-        
-        if (!name || !url || !icon) {
-            alert('请填写所有字段！');
-            return;
-        }
-        
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            alert('请输入有效的网址！');
-            return;
-        }
-        
-        // 更新网站信息
-        sites[index] = { name, url, icon };
-        await saveSites(sites);
-        await renderSites();
-        
-        // 清空表单并关闭模态框
-        document.getElementById('site-name').value = '';
-        document.getElementById('site-url').value = '';
-        document.getElementById('site-icon').value = '';
-        addSiteModal.classList.remove('show');
-        
-        // 恢复原始保存按钮行为
-        saveBtn.onclick = originalClickHandler;
-    };
     
     hideContextMenu();
 });
@@ -562,28 +583,53 @@ document.addEventListener('contextmenu', (e) => {
     }
 });
 
-// 设置卡片点击事件
-document.querySelectorAll('.setting-card').forEach(card => {
-    card.addEventListener('click', () => {
-        const setting = card.dataset.setting;
-        const value = card.dataset.value;
-        
-        // 移除同组其他卡片的选中状态
-        document.querySelectorAll(`.setting-card[data-setting="${setting}"]`).forEach(c => {
-            c.classList.remove('active');
-        });
-        
-        // 添加当前卡片的选中状态
-        card.classList.add('active');
-        
-        // 应用设置
-        if (setting === 'card-size') {
-            saveCardSize(value);
-            applyCardSize(value);
-        } else if (setting === 'clock-style') {
-            saveClockStyle(value);
-            applyClockStyle(value);
-        }
+// 更新设置界面
+async function updateSettingsUI(settings) {
+    // 卡片大小高亮
+    document.querySelectorAll('.setting-card[data-setting="card-size"]').forEach(card => {
+        card.classList.toggle('active', card.dataset.value === (settings.cardSize || 'small'));
+    });
+    // 时钟样式高亮
+    document.querySelectorAll('.setting-card[data-setting="clock-style"]').forEach(card => {
+        card.classList.toggle('active', card.dataset.value === (settings.clockStyle || 'simple'));
+    });
+    // 背景类型高亮
+    document.querySelectorAll('.setting-card[data-setting="background-type"]').forEach(card => {
+        card.classList.toggle('active', card.dataset.value === settings.backgroundType);
+    });
+    // 显示/隐藏相应的设置面板
+    document.getElementById('color-background-settings').style.display = 
+        settings.backgroundType === 'color' ? 'block' : 'none';
+    document.getElementById('image-background-settings').style.display = 
+        settings.backgroundType === 'image' ? 'block' : 'none';
+    // 更新颜色选择器
+    document.getElementById('background-color').value = settings.backgroundColor;
+    // 加载背景图片列表
+    if (settings.backgroundType === 'image') {
+        await loadBackgroundImages();
+    }
+}
+
+// 卡片大小、时钟样式点击事件
+// 只保留一套逻辑，全部走 settings
+
+document.querySelectorAll('.setting-card[data-setting="card-size"]').forEach(card => {
+    card.addEventListener('click', async () => {
+        const settings = await loadBackgroundSettings();
+        settings.cardSize = card.dataset.value;
+        await saveBackgroundSettings(settings);
+        await updateSettingsUI(settings);
+        applyCardSize(settings.cardSize);
+    });
+});
+
+document.querySelectorAll('.setting-card[data-setting="clock-style"]').forEach(card => {
+    card.addEventListener('click', async () => {
+        const settings = await loadBackgroundSettings();
+        settings.clockStyle = card.dataset.value;
+        await saveBackgroundSettings(settings);
+        await updateSettingsUI(settings);
+        applyClockStyle(settings.clockStyle);
     });
 });
 
@@ -597,29 +643,293 @@ document.getElementById('background-color').addEventListener('change', (e) => {
     applyBackground(background);
 });
 
-// 背景图片上传
-document.getElementById('background-upload').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const background = {
-                type: 'image',
-                value: e.target.result
-            };
-            saveBackground(background);
-            applyBackground(background);
-        };
-        reader.readAsDataURL(file);
+// 右键菜单元素
+let bgImgContextMenu = document.getElementById('bg-img-context-menu');
+if (!bgImgContextMenu) {
+    bgImgContextMenu = document.createElement('div');
+    bgImgContextMenu.id = 'bg-img-context-menu';
+    bgImgContextMenu.className = 'context-menu';
+    bgImgContextMenu.innerHTML = `
+        <div class="context-menu-item delete">
+            <i class="ri-delete-bin-line"></i> 删除
+        </div>
+    `;
+    document.body.appendChild(bgImgContextMenu);
+}
+let currentBgImgItem = null;
+
+// 关闭右键菜单
+function hideBgImgContextMenu() {
+    bgImgContextMenu.classList.remove('show');
+    currentBgImgItem = null;
+}
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('#bg-img-context-menu')) {
+        hideBgImgContextMenu();
     }
 });
 
-// 初始加载
+// 右键菜单删除功能
+bgImgContextMenu.querySelector('.context-menu-item.delete').onclick = async function() {
+    if (!currentBgImgItem) return;
+    const img = currentBgImgItem.querySelector('img');
+    if (!img) return;
+    // 获取图片文件名
+    const url = img.src;
+    const filename = url.split('/').pop();
+    if (!confirm('确定要删除这张背景图片吗？')) return;
+    // 如果当前设置的背景图片就是被删图片，则自动切换为默认背景
+    const settings = await loadBackgroundSettings();
+    if (settings.backgroundImage && url.endsWith(settings.backgroundImage.split('/').pop())) {
+        settings.backgroundImage = '';
+        settings.backgroundType = 'color';
+        await saveBackgroundSettings(settings);
+        await applyBackgroundSettings(settings);
+    }
+    // 调用后端接口删除
+    try {
+        const resp = await fetch(`/api/backgrounds/${encodeURIComponent(filename)}`, { method: 'DELETE' });
+        if (resp.ok) {
+            await loadBackgroundImages();
+        } else {
+            alert('删除失败');
+        }
+    } catch (e) {
+        alert('删除失败');
+    }
+    hideBgImgContextMenu();
+};
+
+// 判断颜色亮度（YIQ公式）
+function isColorLight(hex) {
+    let r, g, b;
+    if (hex.startsWith('#')) {
+        hex = hex.slice(1);
+    }
+    if (hex.length === 3) {
+        r = parseInt(hex[0] + hex[0], 16);
+        g = parseInt(hex[1] + hex[1], 16);
+        b = parseInt(hex[2] + hex[2], 16);
+    } else if (hex.length === 6) {
+        r = parseInt(hex.slice(0, 2), 16);
+        g = parseInt(hex.slice(2, 4), 16);
+        b = parseInt(hex.slice(4, 6), 16);
+    } else {
+        return false;
+    }
+    // YIQ公式
+    return (r * 299 + g * 587 + b * 114) / 1000 > 180;
+}
+
+// backgrounds缓存
+let backgroundsMeta = {};
+
+// 加载背景图片列表（并缓存亮暗信息）
+async function loadBackgroundImages() {
+    try {
+        const response = await fetch('/api/backgrounds');
+        if (!response.ok) {
+            throw new Error('获取背景图片列表失败');
+        }
+        const images = await response.json();
+        backgroundsMeta = {};
+        const container = document.getElementById('background-images');
+        container.innerHTML = '';
+        const settings = await loadBackgroundSettings();
+        const highlightUrl = settings.backgroundImage;
+        // 只渲染所有图片
+        images.forEach(imgObj => {
+            backgroundsMeta[imgObj.url] = imgObj.isLight;
+            const item = document.createElement('div');
+            item.className = 'background-image-item';
+            if (highlightUrl === imgObj.url && settings.backgroundType === 'image') {
+                item.classList.add('selected');
+            }
+            item.innerHTML = `
+                <img src="${imgObj.url}" alt="背景图片">
+            `;
+            // 点击图片设置为背景
+            item.querySelector('img').addEventListener('click', async () => {
+                const settings = await loadBackgroundSettings();
+                settings.backgroundType = 'image';
+                settings.backgroundImage = imgObj.url;
+                await saveBackgroundSettings(settings);
+                await applyBackgroundSettings(settings);
+                await loadBackgroundImages(); // 刷新高亮
+                await updateSettingsUI(settings);
+                // 立即根据图片亮暗信息切换主题
+                if (backgroundsMeta[imgObj.url] === true) {
+                    document.body.classList.add('theme-light');
+                    document.body.classList.remove('theme-dark');
+                } else {
+                    document.body.classList.add('theme-dark');
+                    document.body.classList.remove('theme-light');
+                }
+            });
+            // 右键菜单
+            item.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                currentBgImgItem = item;
+                bgImgContextMenu.style.left = `${e.clientX}px`;
+                bgImgContextMenu.style.top = `${e.clientY}px`;
+                bgImgContextMenu.classList.add('show');
+            });
+            container.appendChild(item);
+        });
+        // 插入加号上传块
+        const uploadItem = document.createElement('div');
+        uploadItem.className = 'background-image-item background-upload-item';
+        uploadItem.innerHTML = `
+            <div class="upload-icon-wrapper" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+                <i class="ri-add-line" style="font-size:3rem;color:#4a9eff;"></i>
+            </div>
+        `;
+        // 创建隐藏input[type=file]
+        let uploadInput = document.getElementById('background-upload-input');
+        if (!uploadInput) {
+            uploadInput = document.createElement('input');
+            uploadInput.type = 'file';
+            uploadInput.accept = 'image/*';
+            uploadInput.style.display = 'none';
+            uploadInput.id = 'background-upload-input';
+            document.body.appendChild(uploadInput);
+        }
+        uploadItem.addEventListener('click', () => {
+            uploadInput.value = '';
+            uploadInput.click();
+        });
+        uploadInput.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('file', file);
+            try {
+                const response = await fetch('/api/backgrounds/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (response.ok) {
+                    await loadBackgroundImages();
+                }
+            } catch (error) {
+                console.error('上传背景图片失败:', error);
+            }
+        };
+        container.appendChild(uploadItem);
+    } catch (error) {
+        console.error('加载背景图片列表失败:', error);
+    }
+}
+
+// 自动切换主题，图片用 backgroundsMeta
+function autoSetTheme(settings) {
+    if (settings.backgroundType === 'color') {
+        if (isColorLight(settings.backgroundColor)) {
+            document.body.classList.add('theme-light');
+            document.body.classList.remove('theme-dark');
+        } else {
+            document.body.classList.add('theme-dark');
+            document.body.classList.remove('theme-light');
+        }
+    } else if (settings.backgroundType === 'image') {
+        const url = settings.backgroundImage;
+        if (!url) {
+            document.body.classList.add('theme-dark');
+            document.body.classList.remove('theme-light');
+            return;
+        }
+        if (backgroundsMeta[url] === true) {
+            document.body.classList.add('theme-light');
+            document.body.classList.remove('theme-dark');
+        } else {
+            document.body.classList.add('theme-dark');
+            document.body.classList.remove('theme-light');
+        }
+    }
+}
+
+// 在 applyBackgroundSettings 后调用自动切换主题
+async function applyBackgroundSettings(settings) {
+    if (settings.backgroundType === 'color') {
+        document.body.style.background = settings.backgroundColor;
+        window.currentRandomBgUrl = '';
+        autoSetTheme(settings);
+    } else if (settings.backgroundType === 'image') {
+        if (!settings.backgroundImage) {
+            // 没有图片时用暗色默认背景
+            document.body.style.background = '#1a1a1a';
+            document.body.classList.add('theme-dark');
+            document.body.classList.remove('theme-light');
+            return;
+        }
+        document.body.style.background = `url(${settings.backgroundImage}) center/cover no-repeat fixed`;
+        window.currentRandomBgUrl = settings.backgroundImage;
+        autoSetTheme(settings);
+    }
+}
+
+// 背景设置相关常量
+const BACKGROUND_TYPE_KEY = 'background_type';
+const BACKGROUND_COLOR_KEY = 'background_color';
+const BACKGROUND_IMAGE_KEY = 'background_image';
+
+// 加载背景设置
+async function loadBackgroundSettings() {
+    try {
+        const response = await fetch('/api/settings');
+        if (!response.ok) {
+            throw new Error('获取设置失败');
+        }
+        const settings = await response.json();
+        return settings;
+    } catch (error) {
+        console.error('加载背景设置失败:', error);
+        return {
+            backgroundType: 'color',
+            backgroundColor: '#1a1a1a',
+            backgroundImage: '',
+        };
+    }
+}
+
+// 保存背景设置
+async function saveBackgroundSettings(settings) {
+    try {
+        const response = await fetch('/api/settings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(settings)
+        });
+        if (!response.ok) {
+            throw new Error('保存设置失败');
+        }
+        return true;
+    } catch (error) {
+        console.error('保存背景设置失败:', error);
+        return false;
+    }
+}
+
+// 修改初始化函数，确保 applyBackgroundSettings 在 updateSettingsUI 之后调用
 const init = async () => {
     await renderSites();
-    applyCardSize(loadCardSize());
-    applyClockStyle(loadClockStyle());
-    applyBackground(loadBackground());
+    const settings = await loadBackgroundSettings();
+    await updateSettingsUI(settings);
+    applyCardSize(settings.cardSize || 'small');
+    applyClockStyle(settings.clockStyle || 'simple');
+    await applyBackgroundSettings(settings);
 };
 
 init(); 
+
+document.querySelectorAll('.setting-card[data-setting="background-type"]').forEach(card => {
+    card.addEventListener('click', async () => {
+        const settings = await loadBackgroundSettings();
+        settings.backgroundType = card.dataset.value;
+        await saveBackgroundSettings(settings);
+        await updateSettingsUI(settings);
+        await applyBackgroundSettings(settings);
+    });
+}); 

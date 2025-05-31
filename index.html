@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
-<body>
+<body style="background:linear-gradient(135deg,#1a1a1a,#2a2a2a);">
     <div class="container">
         <header>
             <div class="time-display">
@@ -46,26 +46,26 @@
     <div id="add-site-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>添加网站</h2>
+                <h2 id="modal-title">添加网站</h2>
                 <button class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="site-name">网站名称</label>
+                    <label for="site-name">网站名称 <span class="required">*</span></label>
                     <input type="text" id="site-name" placeholder="输入网站名称">
                 </div>
                 <div class="form-group">
-                    <label for="site-url">网站地址</label>
+                    <label for="site-url">网站地址 <span class="required">*</span></label>
                     <input type="url" id="site-url" placeholder="输入网站地址 (例如: https://www.example.com)">
                 </div>
                 <div class="form-group">
-                    <label for="site-icon">图标类名</label>
+                    <label for="site-icon">图标类名 (选填)</label>
                     <input type="text" id="site-icon" placeholder="输入 Remix Icon 类名 (例如: ri-github-fill)">
                     <small>查看可用图标: <a href="https://remixicon.com/" target="_blank">Remix Icon</a></small>
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="save-site-btn" class="save-btn">保存</button>
+                <button id="save-site-btn" class="save-btn">添加</button>
             </div>
         </div>
     </div>
@@ -127,14 +127,37 @@
 
                 <div class="settings-section">
                     <h3>背景设置</h3>
-                    <div class="form-group">
-                        <label for="background-upload">上传背景图片</label>
-                        <input type="file" id="background-upload" accept="image/*">
-                        <small>支持 jpg、png、gif 格式</small>
+                    <div class="settings-options">
+                        <div class="setting-card" data-setting="background-type" data-value="color">
+                            <div class="setting-preview">
+                                <div class="preview-background color">
+                                    <i class="ri-palette-fill"></i>
+                                </div>
+                            </div>
+                            <span class="setting-label">纯色背景</span>
+                        </div>
+                        <div class="setting-card" data-setting="background-type" data-value="image">
+                            <div class="setting-preview">
+                                <div class="preview-background image">
+                                    <i class="ri-image-fill"></i>
+                                </div>
+                            </div>
+                            <span class="setting-label">图片背景</span>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="background-color">背景颜色</label>
-                        <input type="color" id="background-color" value="#1a1a1a">
+                    
+                    <div id="color-background-settings" class="background-settings">
+                        <div class="form-group">
+                            <label for="background-color">背景颜色</label>
+                            <input type="color" id="background-color" value="#1a1a1a">
+                        </div>
+                    </div>
+                    
+                    <div id="image-background-settings" class="background-settings" style="display: none;">
+                        <div class="background-list">
+                            <div class="background-wall-title">背景墙</div>
+                            <div id="background-images" class="background-images-grid"></div>
+                        </div>
                     </div>
                 </div>
             </div>
